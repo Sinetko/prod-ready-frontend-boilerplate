@@ -1,0 +1,7 @@
+fragment Example on Query {
+  hello(name: "World")
+}
+
+query Bootstrap($name: String!) {
+  hello(name: $name)
+}

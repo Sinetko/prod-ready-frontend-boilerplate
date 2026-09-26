@@ -1,0 +1,66 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HUSKY: "0"
+  CI: "true"
+
+jobs:
+  frontend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: package.json
+          cache: npm
+      - run: npm install --global npm@12.1.0
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - name: Check changed shared code
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: npm run check-changed-shared-coverage -- --base "$BASE_SHA"
+      - run: npm run docs:drift -- --sweep --strict
+      - run: npm run graph-generate && npm run graph -- --strict
+      - run: npm run generate-code && git diff --exit-code -- src/graphql
+      - run: npm test
+      - name: Test repository tooling
+        run: |
+          npm run test:scaffolders
+          npm run test:guards
+          npm run test:graphs
+          npm run test:hooks
+          npm run test:agents
+          npm run test:docs
+          npm run test:parity
+      - run: npm run build
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: frontend-dist
+          path: dist/
+          if-no-files-found: error
+      - run: docker build -t boilerplate-frontend:ci .
+      - name: Smoke test frontend container
+        run: |
+          docker run --detach --name frontend --publish 8080:8080 boilerplate-frontend:ci
+          trap 'docker logs frontend; docker rm --force frontend' EXIT
+          curl --fail --retry 10 --retry-connrefused --retry-delay 1 http://localhost:8080/healthz
+          curl --fail http://localhost:8080/example
+
+  autotests:
+    uses: ./.github/workflows/autotests.yml

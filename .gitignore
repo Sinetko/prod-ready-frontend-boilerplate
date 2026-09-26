@@ -1,0 +1,11 @@
+node_modules/
+.pnpm-store/
+dist/
+*.tsbuildinfo
+.husky/_/
+.eslintcache
+
+.claude/cache/
+.claude/context-graphs/
+autotests/playwright/playwright-report/
+autotests/playwright/test-results/

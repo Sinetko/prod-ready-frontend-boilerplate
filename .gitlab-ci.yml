@@ -1,0 +1,75 @@
+include:
+  - local: /autotests/.gitlab-ci.yml
+
+stages: [verify, test, build]
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH || $CI_COMMIT_TAG'
+
+variables:
+  HUSKY: "0"
+  CI: "true"
+  GIT_DEPTH: "0"
+
+.node:
+  image: node:24.21.0-bookworm
+  interruptible: true
+  before_script:
+    - npm install --global npm@12.1.0
+    - npm ci --cache .claude/cache/npm --prefer-offline --no-audit --no-fund
+  cache:
+    key:
+      files: [package-lock.json, autotests/playwright/package-lock.json]
+    paths: [.claude/cache/npm/]
+
+verify:
+  extends: .node
+  stage: verify
+  script:
+    - npm run lint
+    - if [ -n "$CI_MERGE_REQUEST_DIFF_BASE_SHA" ]; then npm run check-changed-shared-coverage -- --base "$CI_MERGE_REQUEST_DIFF_BASE_SHA"; fi
+    - npm run docs:drift -- --sweep --strict
+    - npm run graph-generate
+    - npm run graph -- --strict
+    - npm run generate-code
+    - git diff --exit-code -- src/graphql
+
+unit-tests:
+  extends: .node
+  stage: test
+  script:
+    - npm test
+    - npm run test:scaffolders
+    - npm run test:guards
+    - npm run test:graphs
+    - npm run test:hooks
+    - npm run test:agents
+    - npm run test:docs
+    - npm run test:parity
+
+frontend-build:
+  extends: .node
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths: [dist/]
+
+.docker-build:
+  stage: build
+  image:
+    name: moby/buildkit:rootless@sha256:80b15f0735e87bab7bf59ec4d695dfb4a7cfb25521cf56dc75d6f256285b63ef
+    entrypoint: [""]
+  variables:
+    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
+  script:
+    - buildctl-daemonless.sh build --frontend dockerfile.v0 --local context=. --local dockerfile=. --opt "filename=$DOCKERFILE" --output type=oci,dest=/tmp/image.tar
+
+frontend-docker:
+  extends: .docker-build
+  variables:
+    DOCKERFILE: Dockerfile

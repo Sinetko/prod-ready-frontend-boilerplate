@@ -1,0 +1,24 @@
+autotests:
+  extends: .node
+  stage: test
+  script:
+    - npm --prefix autotests/playwright ci --cache "$CI_PROJECT_DIR/.claude/cache/npm" --prefer-offline --no-audit --no-fund
+    - npm --prefix autotests/playwright run lint
+    - cd autotests/playwright
+    - npx --no-install playwright install --with-deps chromium
+    - npm test -- --reporter=line,html,junit
+    - npm run test:guard
+  variables:
+    PLAYWRIGHT_JUNIT_OUTPUT_FILE: test-results/junit.xml
+  artifacts:
+    when: always
+    paths:
+      - autotests/playwright/playwright-report/
+      - autotests/playwright/test-results/
+    reports:
+      junit: autotests/playwright/test-results/junit.xml
+
+autotests-docker:
+  extends: .docker-build
+  variables:
+    DOCKERFILE: autotests/Dockerfile

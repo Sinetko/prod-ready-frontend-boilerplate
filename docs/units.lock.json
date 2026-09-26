@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "units": {
+    "example": {
+      "fingerprint": "bf0d92cecdd1e51da642b9b409a4f1709c5b52d21b503e8b0c4cbfb7da0285b9",
+      "documents": {
+        "docs/units/example/technical.md": "19a081b12398f0e156e6d772e63308efacd8a1e44eebf1d562598397a8b12dbb",
+        "docs/units/example/business.md": "c41388903e9f9d1bced1d185841e07f4cd14404615c20fe952a1e1b02e043e8b"
+      }
+    },
+    "graphql": {
+      "fingerprint": "4795d860e494e7b23225428e35f851bc4e2815c7111a4509165c7f02e5f3a5fb",
+      "documents": {
+        "docs/units/graphql/technical.md": "6e86478da99f1ecf9fc3c9d22f8d27a9edc63d300a69131500f89cc1bfea1475",
+        "docs/units/graphql/business.md": "c7e18cf82aed50c71c71cdc21e2f7e595221f567750fe49c80eb1c19a991bd07"
+      }
+    },
+    "tooling": {
+      "fingerprint": "441238d2b69fb424091488f4bf36b9dad86635033ee008d9ee7709332df17a5f",
+      "documents": {
+        "docs/units/tooling/technical.md": "deb8782ff5d6b5f6ad1f438544605a2e17dcbc26fae9a792bd5243db58187b16",
+        "docs/units/tooling/business.md": "fefcf9a3274549fae1d8793339dc285127c48e7f9779e101b353f9c3a4365b08"
+      }
+    }
+  }
+}

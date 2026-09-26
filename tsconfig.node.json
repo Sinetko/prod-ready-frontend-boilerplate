@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "CommonJS",
+    "jsx": "react-jsx",
+    "isolatedModules": false,
+    "verbatimModuleSyntax": false,
+    "tsBuildInfoFile": "tsconfig.node.tsbuildinfo",
+    "types": ["node"]
+  },
+  "include": ["scripts/**/*.ts", "*.ts"]
+}

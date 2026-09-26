@@ -1,0 +1,3 @@
+query Bootstrap($name: String!) {
+  hello(name: $name)
+}

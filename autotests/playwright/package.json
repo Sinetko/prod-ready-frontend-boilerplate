@@ -1,0 +1,33 @@
+{
+  "name": "boilerplate-playwright",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "npm@12.1.0",
+  "engines": { "node": "24.x", "npm": "12.x" },
+  "volta": { "node": "24.21.0", "npm": "12.1.0" },
+  "scripts": {
+    "test": "playwright test",
+    "test:list": "playwright test --list",
+    "test:ui": "playwright test --ui",
+    "install:browsers": "playwright install chromium",
+    "lint": "npm run lint:code && npm run lint:types",
+    "lint:code": "eslint . --max-warnings 0 --cache",
+    "lint:types": "tsc --noEmit --incremental",
+    "fix": "npm run lint:code -- --fix",
+    "test:guard": "node scripts/verify-guard.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^24.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.70.1",
+    "@typescript-eslint/parser": "^8.70.1",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "globals": "^17.12.0",
+    "graphql": "^16.14.2",
+    "prettier": "^3.9.9",
+    "typescript": "~5.9.3"
+  }
+}

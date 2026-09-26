@@ -1,0 +1,4 @@
+# Bootstrap-only schema. Replace with the project's API schema when available.
+type Query {
+  hello(name: String!): String!
+}

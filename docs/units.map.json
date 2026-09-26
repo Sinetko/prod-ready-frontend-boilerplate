@@ -1,0 +1,64 @@
+[
+  {
+    "id": "example",
+    "kind": "feature",
+    "title": "Example page",
+    "globs": [
+      "src/features/example/**",
+      "src/app/**",
+      "src/bootstrap/**",
+      "src/core/contexts/example/**",
+      "src/core/stores/example/**",
+      "src/shared/hooks/use-example/**",
+      "src/shared/utils/example/**"
+    ]
+  },
+  {
+    "id": "graphql",
+    "kind": "service",
+    "title": "GraphQL integration",
+    "globs": [
+      "src/graphql/**",
+      "schema.graphql",
+      "codegen.yml",
+      "graphql.config.ts",
+      "scripts/generate-code.ts",
+      "scripts/lib/documents.ts"
+    ]
+  },
+  {
+    "id": "tooling",
+    "kind": "infra",
+    "title": "Development tooling",
+    "globs": [
+      "scripts/**",
+      ".claude/hooks/**",
+      ".claude/agents/**",
+      ".claude/skills/**",
+      "package.json",
+      "package-lock.json",
+      ".husky/**",
+      "*config*",
+      ".*rc*",
+      "knip.ts",
+      "src/vite/**",
+      "autotests/playwright/**",
+      "AGENTS.md",
+      "CLAUDE.md",
+      ".agents/**",
+      "src/**/AGENTS.md",
+      "src/**/CLAUDE.md",
+      ".claude/AGENTS.md",
+      ".claude/CLAUDE.md",
+      "autotests/AGENTS.md",
+      "autotests/CLAUDE.md",
+      "Dockerfile",
+      ".dockerignore",
+      "docker/**",
+      ".gitlab-ci.yml",
+      ".github/workflows/**",
+      "autotests/Dockerfile",
+      "autotests/.gitlab-ci.yml"
+    ]
+  }
+]

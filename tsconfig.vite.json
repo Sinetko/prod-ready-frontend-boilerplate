@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "tsBuildInfoFile": "tsconfig.vite.tsbuildinfo",
+    "types": ["node"]
+  },
+  "include": ["vite.config.ts", "src/vite/**/*.ts"],
+  "exclude": ["node_modules", "dist", "autotests"]
+}

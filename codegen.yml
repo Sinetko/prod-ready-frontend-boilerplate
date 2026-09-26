@@ -1,0 +1,20 @@
+overwrite: true
+schema: schema.graphql
+documents:
+  - 'src/graphql/{fragments,queries,mutations}/**/*.{graphql,ts,tsx}'
+config:
+  useTypeImports: true
+  strictScalars: true
+generates:
+  src/graphql/graphql-api-types.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node
+      - typescript-resolvers
+  src/graphql/schema.graphql:
+    plugins:
+      - schema-ast
+  src/graphql/schema.graphql.json:
+    plugins:
+      - introspection
