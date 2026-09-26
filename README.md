@@ -164,8 +164,8 @@ rules; Knip skips only its generated export/type reports and still follows its
 dependencies. The SWC plugin's required `useAtYourOwnRisk_mutateSwcOptions` name
 has one documented naming-rule exception.
 
-The bootstrap phase checklist and verification history live in
-`BOOTSTRAP_PROGRESS.md` while active, then `docs/ARCHITECTURE_HISTORY.md`.
+Architecture decisions and verification history are recorded in
+[docs/ARCHITECTURE_HISTORY.md](docs/ARCHITECTURE_HISTORY.md).
 
 ## Build tooling
 
@@ -216,7 +216,7 @@ const result = useApolloQuery(BootstrapDocument, { variables: { name: 'World' } 
 The query wrappers preserve Apollo's overloads and typed-document inference. Application
 query code must use these entry points instead of importing Apollo's raw hooks.
 They use the client's existing `ApolloProvider` (or an explicit `client` option);
-no backend URL or network client is configured by this bootstrap phase.
+the boilerplate does not configure a backend URL or network client.
 
 `src/graphql/graphql-api-types.ts`, `src/graphql/schema.graphql`, and
 `src/graphql/schema.graphql.json`, and `src/graphql/documents.graphql` are generated
@@ -227,7 +227,7 @@ fragments/queries/mutations directories; generated output is excluded from disco
 
 ## Canonical examples
 
-Phase 5's hand-written examples are the source shapes for the Phase 6 scaffolders:
+The handwritten examples define the canonical shapes used by the scaffolders:
 
 | Artefact | Location |
 | --- | --- |
@@ -416,7 +416,7 @@ static checker does not analyze arbitrary helper functions, `i18n.t`, `<Trans>`,
 or runtime locale loading. Extend it with fixtures before adopting those patterns;
 no product locale list or runtime coverage threshold is imposed.
 
-## Context graphs (Phase 8)
+## Context graphs
 
 Generate the repository index after changes, then query it through the CLI:
 
@@ -437,8 +437,8 @@ compiles the TypeScript generator, query command, and their modules to ESM `.mjs
 under `.claude/cache/graph-tools/<content-hash>/`. Compilation is cached by source
 content, compiler version, and build script. No extra dependency is needed. Run
 commands from the repository root. Generated graphs and compiled files are ignored
-by Git; regenerate them in each fresh checkout. Automatic PostToolUse and session
-refresh wiring belongs to Phases 9–10; Phase 8 supplies the commands only.
+by Git; regenerate them in each fresh checkout. Claude Code hooks refresh graphs
+after relevant tool calls and at session lifecycle events.
 
 Each graph uses version 1 JSON: `{ version, kind, fingerprint, records }`. Records
 contain `relation`, `from`, `to`, repository-relative `path`, and 1-based `line`,
@@ -468,8 +468,8 @@ Generation aborts if repository contents change during analysis.
 | globals | Ambient declarations and module/global augmentations. |
 | autotests.testrail/coverage/facade/mock | Literal TestRail tags, transitive test imports, facade classes, and named mock factory definitions/consuming modules. |
 
-Analytics is empty until matching calls exist. No analytics service or doc-unit
-mapping is created by this phase. Build-pipeline edges do not execute or fully
+Analytics is empty until matching calls exist. The graph generator indexes existing
+analytics calls and doc-unit mappings; it does not create them. Build-pipeline edges do not execute or fully
 interpret shell commands. Component and data relationships omit runtime dispatch,
 reflection, higher-order component behavior, and unresolved external symbols.
 Translation indexing does not evaluate arbitrary JavaScript. Graphs complement
@@ -512,11 +512,11 @@ nonzero exit. Bare `--strict` selects globals for the audit. External package
 imports and dynamic imports are represented without inventing local dependencies.
 The generated `index.md` is the small human-readable overview.
 
-## Claude Code settings and hooks (Phases 9–10)
+## Claude Code settings and hooks
 
 [.claude/settings.json](.claude/settings.json) wires lifecycle hooks; the
 [hook index](.claude/hooks/README.md) documents every entry point, escape hatch,
-token counter, cache, and the Phase 14 feature-docs contract.
+token counter, cache, and the feature-documentation contract.
 
 The permission allowlist contains exact Git inspection commands, graph/GraphQL
 lookup command prefixes, and exact lint/test commands. Git arguments beyond the
@@ -535,9 +535,9 @@ npm run docs:drift -- --sweep --strict
 
 Settings syntax was checked against the installed Claude Code; behavior tests
 send actual hook JSON to each shell entry point without making model API calls.
-Feature-document status integrates with the Phase 14 pipeline and has isolated fixture coverage.
+Feature-document status integrates with the unit documentation pipeline and has isolated fixture coverage.
 
-## Claude Code agents (Phase 11)
+## Claude Code agents
 
 The [agent index](.claude/agents/README.md) lists all eight roles, model tiers,
 turn limits, tool scopes, and invocation instructions. Architect/tester writes
@@ -546,7 +546,7 @@ mutation prohibitions. The tester delegates command execution to its caller to
 keep its write boundary enforceable. Feature documentation uses the [unit pipeline](docs/README.md);
 Playwright uses its [separate project](autotests/playwright/README.md). Run `npm run test:agents` for isolated scope-enforcement tests.
 
-## Claude Code skills (Phase 12)
+## Claude Code skills
 
 The [skill index](.claude/skills/README.md) lists the 19 project workflows and
 lookup skills. Each real scaffolder has a thin wrapper; form/table skills compose
@@ -556,7 +556,7 @@ identity, hooks, signing, and verification. Feature docs use the [unit pipeline]
 Skills are discoverable normally and can be invoked by `/name`; loading one does
 not grant tool permissions or authorize an unrelated commit/publication.
 
-## Project guidance (Phase 13)
+## Project guidance
 
 [AGENTS.md](AGENTS.md) is the shared root navigator for project rules, mandatory scaffolders,
 focused lookups, session/output discipline, task routing, and all agents and skills.
@@ -564,25 +564,25 @@ Its scoped-guidance table indexes every subtree CLAUDE.md and AGENTS.md; keep th
 when adding or removing guidance. Detailed architecture, scaffolder, lookup, and
 verification guides live under `.claude/docs/` and are read on demand.
 
-The language, responsibility-based file splitting, and 200-word default final-response
-policies were approved for this phase. Token-hook thresholds remain the reference
+Project policies cover language, responsibility-based file splitting, and a 200-word
+default final-response limit. Token-hook thresholds remain the reference
 defaults and measure API usage rather than visible response words.
 `autotests/CLAUDE.md` documents the separate Playwright project and its test conventions. Strict docs drift
 checks the scoped-guidance pairs and their root index, all artefact indexes and unit freshness.
 [Codex setup](docs/CODEX_SETUP.md) documents installed-version behavior and parity limits;
 [workflow ports](.agents/skills/README.md) provides the four native Codex skills. Root CLAUDE.md imports
 the shared AGENTS.md rules and adds Claude runtime details. Husky runs strict docs drift after guards.
-Run `npm run test:parity` for guidance/port drift fixtures. Bootstrap history is archived after Phase 17.
+Run `npm run test:parity` for guidance/port drift fixtures.
 
 
-## Feature documentation (Phase 14)
+## Feature documentation
 
 [docs/README.md](docs/README.md) documents the unit registry, kind templates, dossiers, evidence
 validation, freshness stamps, backfill, and local export. Run `npm run docs:drift:strict` for
 index plus unit checks and `npm run test:docs` for pipeline tests. External publication is
 explicitly unconfigured; sync commands provide `--export` and reject `--publish`.
 
-## Playwright autotests (Phase 15)
+## Playwright autotests
 
 [autotests/playwright/README.md](autotests/playwright/README.md) covers the separate npm installation,
 Chromium setup, macOS 13 Chrome override, lint/type checks, example-page tests, TestRail tag convention
