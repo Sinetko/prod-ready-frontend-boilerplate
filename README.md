@@ -1,5 +1,7 @@
 # Frontend Architecture Reference
 
+test only
+
 A React and TypeScript reference project that demonstrates how I structure frontend applications:
 explicit module boundaries, typed data contracts, repeatable development workflows, and automated
 checks that keep those decisions intact as the codebase changes.
@@ -48,16 +50,16 @@ Architecture concept.
 
 ## Patterns and engineering decisions
 
-| Area | Approach | Reason |
-| --- | --- | --- |
-| Module interfaces | Small modules with explicit barrel exports and colocated types | Give consumers a clear entry point and keep related contracts together. |
-| UI composition | Components compose hooks and domain behavior; nontrivial helpers get their own modules | Keep rendering code readable and responsibilities independently testable. |
-| Local state | React state and custom hooks | Keep state close to its owner until sharing is necessary. |
-| Shared client state | Zustand stores separate `state` from `actions`, use Immer and named devtools actions | Make state transitions explicit and easier to inspect. |
-| Scoped dependencies | Context providers expose a dedicated consumer hook that checks for a missing provider | Make provider assumptions visible at the usage boundary. |
-| Server-data contracts | Schema-generated typed documents consumed through project-owned Apollo wrappers | Preserve variable/result inference and provide a consistent integration point. |
-| Localization | Resources live beside their page and register through a typed namespace map | Keep copy ownership local while checking keys and namespaces centrally. |
-| Build configuration | Common Vite configuration merged with development or production settings | Share the baseline while keeping environment-specific behavior explicit. |
+| Area                  | Approach                                                                               | Reason                                                                         |
+| --------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Module interfaces     | Small modules with explicit barrel exports and colocated types                         | Give consumers a clear entry point and keep related contracts together.        |
+| UI composition        | Components compose hooks and domain behavior; nontrivial helpers get their own modules | Keep rendering code readable and responsibilities independently testable.      |
+| Local state           | React state and custom hooks                                                           | Keep state close to its owner until sharing is necessary.                      |
+| Shared client state   | Zustand stores separate `state` from `actions`, use Immer and named devtools actions   | Make state transitions explicit and easier to inspect.                         |
+| Scoped dependencies   | Context providers expose a dedicated consumer hook that checks for a missing provider  | Make provider assumptions visible at the usage boundary.                       |
+| Server-data contracts | Schema-generated typed documents consumed through project-owned Apollo wrappers        | Preserve variable/result inference and provide a consistent integration point. |
+| Localization          | Resources live beside their page and register through a typed namespace map            | Keep copy ownership local while checking keys and namespaces centrally.        |
+| Build configuration   | Common Vite configuration merged with development or production settings               | Share the baseline while keeping environment-specific behavior explicit.       |
 
 Handwritten hooks, helpers, utilities and components in `src/` use arrow functions. Generated code
 follows the generator's output. File splitting follows responsibility: nontrivial props belong in a
@@ -126,16 +128,16 @@ configuration alone does not configure required merge checks or deploy an applic
 
 ## Explore the repository
 
-| Start here | What it demonstrates |
-| --- | --- |
-| [Example page](src/features/example/pages/example/) | Composition, translations and a small interactive feature |
-| [Example store](src/core/stores/example/) | State/action separation and immutable updates |
-| [GraphQL hooks](src/graphql/hooks/) | Typed client integration boundaries |
-| [Scaffolders](#scaffolders) | Repeatable module creation and registration |
-| [Guard scripts](#guard-scripts) | Executable dependency and convention policies |
-| [Browser tests](autotests/playwright/) | Separate test project and reusable mock factories |
-| [Documentation system](docs/README.md) | Evidence, freshness checks and review workflow |
-| [Architecture history](docs/ARCHITECTURE_HISTORY.md) | Recorded implementation decisions and verification |
+| Start here                                           | What it demonstrates                                      |
+| ---------------------------------------------------- | --------------------------------------------------------- |
+| [Example page](src/features/example/pages/example/)  | Composition, translations and a small interactive feature |
+| [Example store](src/core/stores/example/)            | State/action separation and immutable updates             |
+| [GraphQL hooks](src/graphql/hooks/)                  | Typed client integration boundaries                       |
+| [Scaffolders](#scaffolders)                          | Repeatable module creation and registration               |
+| [Guard scripts](#guard-scripts)                      | Executable dependency and convention policies             |
+| [Browser tests](autotests/playwright/)               | Separate test project and reusable mock factories         |
+| [Documentation system](docs/README.md)               | Evidence, freshness checks and review workflow            |
+| [Architecture history](docs/ARCHITECTURE_HISTORY.md) | Recorded implementation decisions and verification        |
 
 The sections below contain setup instructions and implementation details.
 
@@ -229,14 +231,14 @@ fragments/queries/mutations directories; generated output is excluded from disco
 
 The handwritten examples define the canonical shapes used by the scaffolders:
 
-| Artefact | Location |
-| --- | --- |
-| Hook | `src/shared/hooks/use-example/` |
-| Utility | `src/shared/utils/example/` |
-| Store | `src/core/stores/example/` |
-| Context | `src/core/contexts/example/` |
-| Page and translations | `src/features/example/pages/example/` |
-| Fragment (flat file) | `src/graphql/fragments/example.fragment.ts` |
+| Artefact              | Location                                    |
+| --------------------- | ------------------------------------------- |
+| Hook                  | `src/shared/hooks/use-example/`             |
+| Utility               | `src/shared/utils/example/`                 |
+| Store                 | `src/core/stores/example/`                  |
+| Context               | `src/core/contexts/example/`                |
+| Page and translations | `src/features/example/pages/example/`       |
+| Fragment (flat file)  | `src/graphql/fragments/example.fragment.ts` |
 
 The app renders `ExamplePage` through its barrel with `ExampleProvider` and
 `I18nextProvider`. The page demonstrates the toggle hook, whitespace utility,
@@ -260,7 +262,6 @@ updates, page interactions, translations, and fragment/schema compatibility.
 The integration test also verifies that the canonical barrels resolve, their
 exported types compile, and both Apollo wrappers consume generated documents.
 
-
 ## Scaffolders
 
 Run a generator without flags for interactive `prompts()` questions. Automation
@@ -269,16 +270,16 @@ flags exit with an error instead of waiting for input. Names and page groups use
 kebab-case; hook names include `use-`. Paths are repo-relative parent directories
 inside `src/`, with traversal and symlink escapes rejected.
 
-| Command | Required flags | Additional flags |
-| --- | --- | --- |
-| `npm run generate-hook --` | `--name use-toggle --path src/shared/hooks` | `--non-interactive` |
-| `npm run generate-util --` | `--name normalize --path src/shared/utils` | `--non-interactive` |
-| `npm run generate-store --` | `--name counter --path src/core/stores` | `--non-interactive` |
-| `npm run generate-context --` | `--name account --path src/core/contexts` | `--non-interactive` |
-| `npm run generate-component --` | `--name panel --path src/shared/components` | `--non-interactive` |
-| `npm run generate-page --` | `--name details --group example --route /details --namespace details` | `--non-interactive` |
-| `npm run generate-query --` | `--name greeting --field hello` | `--lazy` or `--mutation`, `--schema schema.graphql`, `--non-interactive` |
-| `npm run generate-fragment --` | `--name query-fields --type Query` | `--schema schema.graphql`, `--non-interactive` |
+| Command                         | Required flags                                                        | Additional flags                                                         |
+| ------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `npm run generate-hook --`      | `--name use-toggle --path src/shared/hooks`                           | `--non-interactive`                                                      |
+| `npm run generate-util --`      | `--name normalize --path src/shared/utils`                            | `--non-interactive`                                                      |
+| `npm run generate-store --`     | `--name counter --path src/core/stores`                               | `--non-interactive`                                                      |
+| `npm run generate-context --`   | `--name account --path src/core/contexts`                             | `--non-interactive`                                                      |
+| `npm run generate-component --` | `--name panel --path src/shared/components`                           | `--non-interactive`                                                      |
+| `npm run generate-page --`      | `--name details --group example --route /details --namespace details` | `--non-interactive`                                                      |
+| `npm run generate-query --`     | `--name greeting --field hello`                                       | `--lazy` or `--mutation`, `--schema schema.graphql`, `--non-interactive` |
+| `npm run generate-fragment --`  | `--name query-fields --type Query`                                    | `--schema schema.graphql`, `--non-interactive`                           |
 
 For example:
 
@@ -351,15 +352,15 @@ runs Knip and the guards. Each check exits nonzero with file-specific diagnostic
 on violations. Run commands from the repository root. No checks write source files.
 `npm run test:guards` tests valid and invalid fixtures, including actual CLI exit codes.
 
-| Command suffix (`npm run check-…`) | Purpose |
-| --- | --- |
-| `import-from-src` | Enforce the layer dependency table below, including relative imports and re-exports. |
-| `apollo-hooks` | Reject raw Apollo data hooks outside their exact project wrapper implementations. |
-| `graphql-hook-naming` | Require one exported `use<Name>Query`, `use<Name>LazyQuery`, or `use<Name>Mutation` in each operation hook file. |
-| `changed-shared-coverage` | Require tests importing changed shared/business-commons implementation modules. |
-| `used-icons` | Report unreferenced image files under `src/assets/icons/`. |
-| `engines-versions` | Validate exact Volta pins against semver engine ranges and npm's packageManager pin. |
-| `problem-translation-keys` | Find duplicate resource/namespace keys and missing statically referenced translation keys. |
+| Command suffix (`npm run check-…`) | Purpose                                                                                                          |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `import-from-src`                  | Enforce the layer dependency table below, including relative imports and re-exports.                             |
+| `apollo-hooks`                     | Reject raw Apollo data hooks outside their exact project wrapper implementations.                                |
+| `graphql-hook-naming`              | Require one exported `use<Name>Query`, `use<Name>LazyQuery`, or `use<Name>Mutation` in each operation hook file. |
+| `changed-shared-coverage`          | Require tests importing changed shared/business-commons implementation modules.                                  |
+| `used-icons`                       | Report unreferenced image files under `src/assets/icons/`.                                                       |
+| `engines-versions`                 | Validate exact Volta pins against semver engine ranges and npm's packageManager pin.                             |
+| `problem-translation-keys`         | Find duplicate resource/namespace keys and missing statically referenced translation keys.                       |
 
 Layer dependencies are explicit. Every layer can import itself; a feature may
 only import its own domain. Tests (`*.spec.*` / `*.test.*`) may cross boundaries
@@ -367,20 +368,20 @@ for integration coverage. External packages are unaffected. Generated API types
 are excluded from source scanning. The existing `src/types/i18next.d.ts` import
 of `bootstrap/namespace-map` is a narrow exception for ambient namespace typing.
 
-| Layer | Other allowed source layers |
-| --- | --- |
-| assets, types | None |
-| shared | assets, types |
-| theme | assets, types, shared |
-| graphql | assets, types, shared, theme |
-| business-commons | assets, types, shared, theme, graphql |
-| core | assets, types, shared, theme, graphql, business-commons |
-| templates | assets, types, shared, theme, graphql, business-commons, core |
-| features | assets, types, shared, theme, graphql, business-commons, core, templates |
-| bootstrap | All layers above, including features |
-| app | All layers above, including bootstrap |
-| vite | None |
-| __mocks__ | App/runtime layers above |
+| Layer            | Other allowed source layers                                              |
+| ---------------- | ------------------------------------------------------------------------ |
+| assets, types    | None                                                                     |
+| shared           | assets, types                                                            |
+| theme            | assets, types, shared                                                    |
+| graphql          | assets, types, shared, theme                                             |
+| business-commons | assets, types, shared, theme, graphql                                    |
+| core             | assets, types, shared, theme, graphql, business-commons                  |
+| templates        | assets, types, shared, theme, graphql, business-commons, core            |
+| features         | assets, types, shared, theme, graphql, business-commons, core, templates |
+| bootstrap        | All layers above, including features                                     |
+| app              | All layers above, including bootstrap                                    |
+| vite             | None                                                                     |
+| **mocks**        | App/runtime layers above                                                 |
 
 Apollo type-only imports remain allowed for the scaffolders' options types.
 Named runtime imports such as `gql`, `ApolloProvider`, and `ApolloClient` are allowed.
@@ -449,24 +450,24 @@ files are left untouched. Files are atomically replaced and the manifest is
 published last; queries reject interrupted or mixed generations by SHA-256 hash.
 Generation aborts if repository contents change during analysis.
 
-| Graph | Evidence indexed |
-| --- | --- |
-| imports / dependents | Static imports, re-exports, import types, literal `import()`/`require()`, with reverse local edges. Dynamic imports are marked explicitly. |
-| symbols | Named function, variable, class, interface, type alias, and enum declarations. |
-| symbols.components/hooks/utils/types/graphql | Declaration subsets by artefact path, hook name, or TypeScript declaration kind. |
-| references | TypeScript-resolved references to indexed declarations, including aliases and barrel re-exports. |
-| routes | Literal `routePaths` entries in `src/core/routing/routing.model.ts`; no inferred router registration. |
-| features | Source-file membership under `src/features/<domain>/`. |
-| translations | Namespace-map resources, nested literal keys, and statically bound `useTranslation` calls. |
-| graphql-operations | Named operations/fragments from handwritten `.graphql` documents and literal `gql` templates, plus fragment spreads. |
-| graphql-usage | GraphQL imports, references to indexed GraphQL declarations, and generated document usage. |
-| data-flow | Resolved call edges and declaration initializer references. These are syntactic dependencies, not runtime value propagation. |
-| render-flow | JSX references to resolvable project component declarations. |
-| build-pipeline | Package scripts, explicit `npm run`/`run-s` invocations, referenced script paths, config files, and Vite config imports. |
-| analytics-events | Literal `.track('event')` / `.emit('event')` call candidates, explicitly labeled `emits-candidate`; no backend is assumed. |
-| unit-edges | Membership from `docs/units.map.json` globs, including overlaps, and cross-unit import edges. Empty until the map exists. |
-| globals | Ambient declarations and module/global augmentations. |
-| autotests.testrail/coverage/facade/mock | Literal TestRail tags, transitive test imports, facade classes, and named mock factory definitions/consuming modules. |
+| Graph                                        | Evidence indexed                                                                                                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| imports / dependents                         | Static imports, re-exports, import types, literal `import()`/`require()`, with reverse local edges. Dynamic imports are marked explicitly. |
+| symbols                                      | Named function, variable, class, interface, type alias, and enum declarations.                                                             |
+| symbols.components/hooks/utils/types/graphql | Declaration subsets by artefact path, hook name, or TypeScript declaration kind.                                                           |
+| references                                   | TypeScript-resolved references to indexed declarations, including aliases and barrel re-exports.                                           |
+| routes                                       | Literal `routePaths` entries in `src/core/routing/routing.model.ts`; no inferred router registration.                                      |
+| features                                     | Source-file membership under `src/features/<domain>/`.                                                                                     |
+| translations                                 | Namespace-map resources, nested literal keys, and statically bound `useTranslation` calls.                                                 |
+| graphql-operations                           | Named operations/fragments from handwritten `.graphql` documents and literal `gql` templates, plus fragment spreads.                       |
+| graphql-usage                                | GraphQL imports, references to indexed GraphQL declarations, and generated document usage.                                                 |
+| data-flow                                    | Resolved call edges and declaration initializer references. These are syntactic dependencies, not runtime value propagation.               |
+| render-flow                                  | JSX references to resolvable project component declarations.                                                                               |
+| build-pipeline                               | Package scripts, explicit `npm run`/`run-s` invocations, referenced script paths, config files, and Vite config imports.                   |
+| analytics-events                             | Literal `.track('event')` / `.emit('event')` call candidates, explicitly labeled `emits-candidate`; no backend is assumed.                 |
+| unit-edges                                   | Membership from `docs/units.map.json` globs, including overlaps, and cross-unit import edges. Empty until the map exists.                  |
+| globals                                      | Ambient declarations and module/global augmentations.                                                                                      |
+| autotests.testrail/coverage/facade/mock      | Literal TestRail tags, transitive test imports, facade classes, and named mock factory definitions/consuming modules.                      |
 
 Analytics is empty until matching calls exist. The graph generator indexes existing
 analytics calls and doc-unit mappings; it does not create them. Build-pipeline edges do not execute or fully
@@ -573,7 +574,6 @@ checks the scoped-guidance pairs and their root index, all artefact indexes and 
 [workflow ports](.agents/skills/README.md) provides the four native Codex skills. Root CLAUDE.md imports
 the shared AGENTS.md rules and adds Claude runtime details. Husky runs strict docs drift after guards.
 Run `npm run test:parity` for guidance/port drift fixtures.
-
 
 ## Feature documentation
 
